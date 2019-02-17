@@ -23,6 +23,17 @@ namespace WebValidation
         public IConfiguration Configuration;
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll",
+                    builder =>
+                    {
+                        builder
+                        .AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader();
+                    });
+            });
             services.AddMvc();
             string config = Configuration.GetConnectionString("DefaultConnection");
             services.AddDbContext<ApplicationDbContext>(option =>
@@ -41,8 +52,9 @@ namespace WebValidation
                 app.UseDeveloperExceptionPage();
             }
 
-            SeedDatabase.Initialize(app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope().ServiceProvider);
 
+            SeedDatabase.Initialize(app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope().ServiceProvider);
+            app.UseCors("AllowAll");
             app.UseMvc();
         }
     }

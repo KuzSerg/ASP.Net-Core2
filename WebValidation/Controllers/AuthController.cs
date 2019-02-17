@@ -6,6 +6,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -48,11 +49,11 @@ namespace WebValidation.Controllers
                     claims: claims,
                     signingCredentials: new Microsoft.IdentityModel.Tokens.SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256)
                     );
-                var t = new JwtSecurityTokenHandler().WriteToken(token);
+
                 return Ok(new
                 {
-                    token = t,
-                    expiration = token.ValidTo
+                    token = new JwtSecurityTokenHandler().WriteToken(token),
+                expiration = token.ValidTo
                 });
             }
             return Unauthorized();
